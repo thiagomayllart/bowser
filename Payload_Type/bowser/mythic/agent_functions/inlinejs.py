@@ -35,7 +35,7 @@ class InlineJSCommand(CommandBase):
     description = "Run Inline JS"
     version = 1
     author = "@thiagomayllart"
-    argument_class = CatArguments
+    argument_class = InlineJSArguments
     attackmapping = []
 
     async def create_tasking(self, task: MythicTask) -> MythicTask:
