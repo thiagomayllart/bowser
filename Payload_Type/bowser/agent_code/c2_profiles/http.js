@@ -2337,7 +2337,7 @@ class customC2 extends baseC2{
 			this.proxy_dict["kCFProxyPasswordKey"] = this.proxyPassword;
 		}
 		this.jitter = callback_jitter;
-		this.header_list = headers_list;
+		this.header_list = headers;
 		this.aes_psk = "AESPSK"; // base64 encoded key
 		if(this.aes_psk !== ""){
             this.cryptokey = base64ToByteArray(this.aes_psk);
