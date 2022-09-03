@@ -2338,7 +2338,7 @@ class customC2 extends baseC2{
 		}
 		this.jitter = 23;
 		this.header_list = [{"name": "User-Agent", "key": "User-Agent", "value": "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"}];
-		this.aes_psk = "q1StcTBDiZaFNOuYHCloWrNLclQQ0sGZ4ukJUWlR8wo="; // base64 encoded key
+		this.aes_psk = "AESPSK"; // base64 encoded key
 		if(this.aes_psk !== ""){
             this.cryptokey = base64ToByteArray(this.aes_psk);
 		}
