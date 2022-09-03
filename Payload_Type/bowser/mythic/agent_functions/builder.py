@@ -70,7 +70,7 @@ class Bowser(PayloadType):
                 all_c2_code += c2_code
             base_code = base_code.replace("C2PROFILE_HERE", all_c2_code)
             forge_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js").read()
-            base = base_code.replace("FORGE_JS_HERE",forge_js)
+            base_code = base_code.replace("FORGE_JS_HERE",forge_js)
             resp.payload = base_code.encode()
             if build_msg != "":
                 resp.build_stderr = build_msg
