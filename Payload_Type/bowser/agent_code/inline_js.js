@@ -1,4 +1,4 @@
-exports.cat = function(task, command, params){
+exports.inline_js = function(task, command, params){
     try{
         let command_params = JSON.parse(params);
         if(!command_params.hasOwnProperty('command')){return {"user_output": "Missing command", "completed": true, "status": "error"}}
