@@ -14,7 +14,7 @@ exports.inline_js = function(task, command, params){
             return{"user_output": "False", "completed": true};
         }
         else if(contents === undefined){
-            return {"user_output": "Failed to run command.", "completed": true, "status": "error"};
+            return {"user_output": "Empty Response", "completed": true, "status": "error"};
         }
         return {"user_output": contents.toString(), "completed": true};
     }
