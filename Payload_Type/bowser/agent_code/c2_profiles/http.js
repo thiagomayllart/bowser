@@ -489,7 +489,7 @@ get_random_int(max) {
 						resp = this.decrypt_message(resp);
 						resp = resp.replace(/\f/g, '');
 						let enc = new TextEncoder();
-						resp = pkcs7strip(enc.encode(resp))
+						resp = this.pkcs7strip(enc.encode(resp))
 						let decoder = new TextDecoder();
 						resp = decoder.decode(resp);
 						return JSON.parse(resp);
