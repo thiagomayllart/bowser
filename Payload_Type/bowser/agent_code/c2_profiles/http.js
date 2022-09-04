@@ -545,6 +545,11 @@ get_random_int(max) {
 				if(this.aes_psk !== ""){
 					//if we do need to decrypt the response though, do that
 					resp = this.decrypt_message(resp);
+					resp = resp.replace(/\f/g, '');
+					let enc = new TextEncoder();
+					resp = aesjs.padding.pkcs7.strip(enc.encode(resp))
+					let decoder = new TextDecoder();
+					resp = decoder.decode(resp);
 					return JSON.parse(resp);
 				}else{
 					//we don't need to decrypt it, so we can just parse and return it
