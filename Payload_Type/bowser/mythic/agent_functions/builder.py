@@ -78,7 +78,7 @@ class Bowser(PayloadType):
             sha256_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js").read()
             base_code = base_code.replace("SHA_256_JS_HERE",sha256_js)
             aes256_js = os.popen("curl https://cdn.jsdelivr.net/gh/ricmoo/aes-js@e27b99df/index.js").read()
-            base_code = base_code.replace("SHA_256_JS_HERE",aes256_js)
+            base_code = base_code.replace("AES_JS_HERE",aes256_js)
             resp.payload = base_code.encode()
             if build_msg != "":
                 resp.build_stderr = build_msg
