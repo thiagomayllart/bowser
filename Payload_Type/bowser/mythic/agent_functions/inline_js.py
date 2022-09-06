@@ -17,7 +17,7 @@ class InlineJSArguments(TaskArguments):
 
     async def parse_arguments(self):
         if len(self.command_line) == 0:
-            raise Exception("Require JS command to run.\n\tUsage: {}".format(CatCommand.help_cmd))
+            raise Exception("Require JS command to run.\n\tUsage: {}".format(InlineJSCommand.help_cmd))
         if self.command_line[0] == "{":
             self.load_args_from_json_string(self.command_line)
         else:
