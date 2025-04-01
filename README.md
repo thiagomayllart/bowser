@@ -35,4 +35,4 @@ Upon loading, Bowser retrieves its connection data (UUID, cryptographic keys, et
 Bowser connects to your Mythic instance, allowing operators to issue remote commands directly to the browser environment. It is designed to work in conjunction with complementary projects such as Blender, which extends its capabilities in browser-based C2 operations.
 
 ## Integration with Blender
-Bowser is intended to be used alongside the Blender project. While Bowser handles the persistent browser connection and command execution, Blender provides additional tools for managing browser-based sessions. You can also integrate Bowser with any tool capable of injecting Javascripts.
+Bowser is intended to be used alongside the Blender project: https://github.com/thiagomayllart/blender. While Bowser handles the persistent browser connection and command execution, Blender provides additional tools for managing browser-based sessions. You can also integrate Bowser with any tool capable of injecting Javascripts.
